@@ -1,0 +1,169 @@
+NAME
+    Sub::Spec::To::Org - Generate Org documentation from sub spec
+
+VERSION
+    version 0.00
+
+SYNOPSIS
+     use Sub::Spec::To::Org qw(spec_to_org);
+     my $org = spec_to_org(spec => $spec,
+                           # other options
+                          );
+
+DESCRIPTION
+    This module can generate Org document from sub spec.
+
+    This module uses Log::Any logging framework.
+
+        $pod .= "=head2 $sub_spec->{name}(\%args) -> ".
+            ($naked ? "RESULT" : "[STATUS_CODE, ERR_MSG, RESULT]")."\n\n";
+
+        if ($sub_spec->{summary}) {
+            $pod .= "$sub_spec->{summary}.\n\n";
+        }
+
+        my $desc = $sub_spec->{description};
+        if ($desc) {
+            $desc =~ s/^\n+//; $desc =~ s/\n+$//;
+            $pod .= "$desc\n\n";
+        }
+
+        if ($naked) {
+
+        } else {
+            $pod .= <<'_';
+    Returns a 3-element arrayref. STATUS_CODE is 200 on success, or an error code
+    between 3xx-5xx (just like in HTTP). ERR_MSG is a string containing error
+    message, RESULT is the actual result.
+
+    _ }
+
+        my $features = $sub_spec->{features} // {};
+        if ($features->{reverse}) {
+            $pod .= <<'_';
+    This function supports reverse operation. To reverse, add argument C<-reverse>
+    => 1.
+
+    _ } if ($features->{undo}) { $pod .= <<'_'; This function supports undo
+    operation. See Sub::Spec::Clause::features for details on how to perform
+    do/undo/redo.
+
+    _ } if ($features->{dry_run}) { $pod .= <<'_'; This function supports
+    dry-run (simulation) mode. To run in dry-run mode, add argument
+    "-dry_run" => 1.
+
+    _ } if ($features->{pure}) { $pod .= <<'_'; This function is declared as
+    pure, meaning it does not change any external state or have any side
+    effects.
+
+    _ }
+
+        my $args  = $sub_spec->{args} // {};
+        $args = { map {$_ => _parse_schema($args->{$_})} keys %$args };
+        my $has_cat = grep { $_->{clause_sets}[0]{arg_category} }
+            values %$args;
+
+        if (scalar keys %$args) {
+            my $noted_star_req;
+            my $prev_cat;
+            for my $name (sort {
+                (($args->{$a}{clause_sets}[0]{arg_category} // "") cmp
+                     ($args->{$b}{clause_sets}[0]{arg_category} // "")) ||
+                         (($args->{$a}{clause_sets}[0]{arg_pos} // 9999) <=>
+                              ($args->{$b}{clause_sets}[0]{arg_pos} // 9999)) ||
+                                  ($a cmp $b) } keys %$args) {
+                my $arg = $args->{$name};
+                my $ah0 = $arg->{clause_sets}[0];
+
+                my $cat = $ah0->{arg_category} // "";
+                if (!defined($prev_cat) || $prev_cat ne $cat) {
+                    $pod .= "=back\n\n" if defined($prev_cat);
+                    $pod .= ($cat ? ucfirst("$cat arguments") :
+                                 ($has_cat ? "General arguments":"Arguments"));
+                    $pod .= " (C<*> denotes required arguments)"
+                        unless $noted_star_req++;
+                    $pod .= ":\n\n=over 4\n\n";
+                    $prev_cat = $cat;
+                }
+
+                $pod .= "=item * B<$name>".($ah0->{required} ? "*" : "")." => ";
+                my $type;
+                if ($arg->{type} eq 'any') {
+                    my @schemas = map {_parse_schema($_)} @{$ah0->{of}};
+                    my @types   = map {$_->{type}} @schemas;
+                    @types      = sort List::MoreUtils::uniq(@types);
+                    $type       = join("|", @types);
+                } else {
+                    $type       = $arg->{type};
+                }
+                $pod .= "I<$type>";
+                $pod .= " (default ".
+                    (defined($ah0->{default}) ?
+                         "C<".Data::Dump::Partial::dumpp($ah0->{default}).">"
+                             : "none").
+                                 ")"
+                                   if defined($ah0->{default});
+                $pod .= "\n\n";
+
+                my $aliases = $ah0->{arg_aliases};
+                if ($aliases && keys %$aliases) {
+                    $pod .= "Aliases: ";
+                    my $i = 0;
+                    for my $al (sort keys %$aliases) {
+                        $pod .= ", " if $i++;
+                        my $alinfo = $aliases->{$al};
+                        $pod .= "B<$al>".
+                            ($alinfo->{summary} ? " ($alinfo->{summary})" : "");
+                    }
+                    $pod .= "\n\n";
+                }
+
+                $pod .= "Value must be one of:\n\n".
+                    join("", map {" $_\n"} split /\n/,
+                         Data::Dump::dump($ah0->{in}))."\n\n"
+                               if defined($ah0->{in});
+
+                #my $o = $ah0->{arg_pos};
+                #my $g = $ah0->{arg_greedy};
+
+                $pod .= "$ah0->{summary}.\n\n" if $ah0->{summary};
+
+                my $desc = $ah0->{description};
+                if ($desc) {
+                    $desc =~ s/^\n+//; $desc =~ s/\n+$//;
+                    # XXX format/rewrap
+                    $pod .= "$desc\n\n";
+                }
+            }
+            $pod .= "=back\n\n";
+
+        } else {
+
+            $pod .= "No known arguments at this time.\n\n";
+
+        }
+
+FUNCTIONS
+    None of the functions are exported by default, but they are exportable.
+
+  spec_to_org(%args) -> RESULT
+    Generate Org documentation from sub spec.
+
+    Arguments ("*" denotes required arguments):
+
+    *   spec* => *hash*
+
+SEE ALSO
+    Sub::Spec
+
+    Other Sub::Spec::To::* modules.
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2011 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
