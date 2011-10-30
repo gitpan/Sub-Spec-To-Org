@@ -1,6 +1,6 @@
 package Sub::Spec::To::Org;
 BEGIN {
-  $Sub::Spec::To::Org::VERSION = '0.00';
+  $Sub::Spec::To::Org::VERSION = '0.001';
 }
 
 use 5.010;
@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-use Sub::Spec::Utils; #tmp, for _parse_schema
+use Data::Sah::Util;
 
 require Exporter;
 our @ISA       = qw(Exporter);
@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(spec_to_org);
 our %SPEC;
 
 sub _parse_schema {
-    Sub::Spec::Utils::_parse_schema(@_);
+    Data::Sah::Util::_parse_schema(@_);
 }
 
 $SPEC{spec_to_org} = {
@@ -63,7 +63,7 @@ Sub::Spec::To::Org - Generate Org documentation from sub spec
 
 =head1 VERSION
 
-version 0.00
+version 0.001
 
 =head1 SYNOPSIS
 
@@ -73,6 +73,8 @@ version 0.00
                       );
 
 =head1 DESCRIPTION
+
+EARLY RELEASE. NO IMPLEMENTATION YET!
 
 This module can generate Org document from sub spec.
 

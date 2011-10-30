@@ -15,6 +15,7 @@ meta-spec:
 name: Sub-Spec-To-Org
 requires:
   Data::Dump::Partial: 0
+  Data::Sah::Util: 0
   List::MoreUtils: 0
   Log::Any: 0
   Org::Parser: 0
@@ -23,4 +24,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Sub-Spec-To-Org/
   repository: http://github.com/sharyanto/perl-Sub-Spec-To-Org
-version: 0.00
+version: 0.001

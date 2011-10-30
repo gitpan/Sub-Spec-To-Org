@@ -2,7 +2,7 @@ NAME
     Sub::Spec::To::Org - Generate Org documentation from sub spec
 
 VERSION
-    version 0.00
+    version 0.001
 
 SYNOPSIS
      use Sub::Spec::To::Org qw(spec_to_org);
@@ -11,6 +11,8 @@ SYNOPSIS
                           );
 
 DESCRIPTION
+    EARLY RELEASE. NO IMPLEMENTATION YET!
+
     This module can generate Org document from sub spec.
 
     This module uses Log::Any logging framework.
