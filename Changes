@@ -1,5 +1,11 @@
 Revision history for Sub::Spec::To::Org
 
+0.002    2011-11-23
+
+         No functional changes. _parse_schema() is moved from Data::Sah::Util to
+         normalize_schema() from Data::Sah.
+
+
 0.001    2011-10-31
 
          No real functional changes. _parse_schema() is moved from

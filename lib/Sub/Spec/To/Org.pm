@@ -1,6 +1,6 @@
 package Sub::Spec::To::Org;
 BEGIN {
-  $Sub::Spec::To::Org::VERSION = '0.001';
+  $Sub::Spec::To::Org::VERSION = '0.002';
 }
 
 use 5.010;
@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-use Data::Sah::Util;
+use Data::Sah;
 
 require Exporter;
 our @ISA       = qw(Exporter);
@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(spec_to_org);
 our %SPEC;
 
 sub _parse_schema {
-    Data::Sah::Util::_parse_schema(@_);
+    Data::Sah::normalize_schema($_[0]);
 }
 
 $SPEC{spec_to_org} = {
@@ -63,7 +63,7 @@ Sub::Spec::To::Org - Generate Org documentation from sub spec
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -169,7 +169,7 @@ _
                 $prev_cat = $cat;
             }
 
-            $pod .= "=item * B<$name>".($ah0->{required} ? "*" : "")." => ";
+            $pod .= "=item * B<$name>".($ah0->{req} ? "*" : "")." => ";
             my $type;
             if ($arg->{type} eq 'any') {
                 my @schemas = map {_parse_schema($_)} @{$ah0->{of}};

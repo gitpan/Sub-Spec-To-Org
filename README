@@ -2,7 +2,7 @@ NAME
     Sub::Spec::To::Org - Generate Org documentation from sub spec
 
 VERSION
-    version 0.001
+    version 0.002
 
 SYNOPSIS
      use Sub::Spec::To::Org qw(spec_to_org);
@@ -88,7 +88,7 @@ DESCRIPTION
                     $prev_cat = $cat;
                 }
 
-                $pod .= "=item * B<$name>".($ah0->{required} ? "*" : "")." => ";
+                $pod .= "=item * B<$name>".($ah0->{req} ? "*" : "")." => ";
                 my $type;
                 if ($arg->{type} eq 'any') {
                     my @schemas = map {_parse_schema($_)} @{$ah0->{of}};
