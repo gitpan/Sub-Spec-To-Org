@@ -1,6 +1,6 @@
 package Sub::Spec::To::Org;
-BEGIN {
-  $Sub::Spec::To::Org::VERSION = '0.002';
+{
+  $Sub::Spec::To::Org::VERSION = '0.003';
 }
 
 use 5.010;
@@ -63,7 +63,7 @@ Sub::Spec::To::Org - Generate Org documentation from sub spec
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
@@ -73,6 +73,12 @@ version 0.002
                       );
 
 =head1 DESCRIPTION
+
+B<NOTICE>: This module and the L<Sub::Spec> standard is deprecated as of Jan
+2012. L<Rinci> is the new specification to replace Sub::Spec, it is about 95%
+compatible with Sub::Spec, but corrects a few issues and is more generic.
+C<Perinci::*> is the Perl implementation for Rinci and many of its modules can
+handle existing Sub::Spec sub specs.
 
 EARLY RELEASE. NO IMPLEMENTATION YET!
 
@@ -255,7 +261,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Steven Haryanto.
+This software is copyright (c) 2012 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

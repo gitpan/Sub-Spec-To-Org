@@ -1,5 +1,10 @@
 Revision history for Sub::Spec::To::Org
 
+0.003    2012-01-21
+
+         No functional changes. Mark deprecated.
+
+
 0.002    2011-11-23
 
          No functional changes. _parse_schema() is moved from Data::Sah::Util to
